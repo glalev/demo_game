@@ -4,7 +4,7 @@ var spreitesheets = [
     {name: 'sniper', src: 'assets/sniper.png'},
     {name: 'rocket', src: 'assets/rocket.png'},
     {name: 'explosion', src: 'assets/explosion.png'},
-    {name: 'background', src: 'assets/background.jpg'}
+    {name: 'rock', src: 'assets/rock.png'}
 ]
 
 var images = {}
@@ -28,7 +28,7 @@ App.prototype._handleFileComplete = function (e){
 App.prototype._setTicker = function (){
     createjs.Ticker.timingMode = createjs.Ticker.RAF;
     this.ticker =  createjs.Ticker.on('tick', function(){
-        this.game.stage.update();
+        this.game.update();
     },this);
 
 

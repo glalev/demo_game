@@ -1,7 +1,7 @@
 'use strict';
 
-var Pointer = function (x,y){
-    var graphics = new createjs.Graphics().beginRadialGradientFill(["rgba(132, 22, 24, 0)","#831618"], [0, 1], 0, 0, 2, 0, 0, 3).drawCircle(0, 0, 3);
+var Pointer = function (){
+    var graphics = new createjs.Graphics().beginRadialGradientFill(["rgba(132, 22, 24, 0)","rgba(132, 22, 24, 1)"], [0, 1], 0, 0, 2, 0, 0, 3).drawCircle(0, 0, 3);
 
     createjs.Shape.call(this, graphics);
 }

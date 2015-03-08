@@ -13,8 +13,6 @@ Sniper.extend(createjs.Container, {
         this.sprite = this._setSprite();
         this.laser = this._setLaser([132, 22, 22]);
 
-        //this.addChild(this.laser);
-
     },
     moveTo: function(x, y){
         var delta = Math.sqrt(Math.pow(x - this.x, 2) + Math.pow(y - this.y, 2));
@@ -57,7 +55,6 @@ Sniper.extend(createjs.Container, {
     },
     _setSprite: function(){
         if (this.sprite){
-            this._setSprite = null;
             return this.sprite;
         }
         var spritesheet = new createjs.SpriteSheet({
@@ -71,6 +68,7 @@ Sniper.extend(createjs.Container, {
 
         var sprite =  new createjs.Sprite( spritesheet, 'stand');
         this.addChild(sprite);
+        this._setSprite = null;
         return sprite;
     }
 });
