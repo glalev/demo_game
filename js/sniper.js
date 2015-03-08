@@ -1,26 +1,26 @@
 'use strict';
 
-var Sniper = function (){
+var Sniper = function () {
 
     createjs.Container.call(this);
     this.x = 50;
     this.y = 50;
     this.sprite = null;
-}
+};
 
 Sniper.extend(createjs.Container, {
-    init: function(){
+    init: function () {
         this.sprite = this._setSprite();
         this.laser = this._setLaser([132, 22, 22]);
 
     },
-    moveTo: function(x, y){
+    moveTo: function (x, y) {
         var delta = Math.sqrt(Math.pow(x - this.x, 2) + Math.pow(y - this.y, 2));
 
         createjs.Tween.removeTweens(this);
         this.sprite.gotoAndPlay('run');
 
-        createjs.Tween.get(this, {loop: false}).to({ x: x, y:y }, delta*4).call(function(){
+        createjs.Tween.get(this, {loop: false}).to({x: x, y: y}, delta*4).call(function () {
             this.sprite.gotoAndPlay('stand');
         });
 
@@ -31,18 +31,18 @@ Sniper.extend(createjs.Container, {
         var angle = Math.atan2(dy, dx) * 180 / Math.PI;
         this.rotation = angle + 270;
     },
-    changeLaserColor: (function() {
+    changeLaserColor: (function () {
         var i = 0;
         var colors = [[22, 132, 22], [22, 22, 132],[132, 22, 22]];
-        return function(){
-            if (i >= colors.length){
+        return function () {
+            if (i >= colors.length) {
                 i = 0;
             }
 
             this.laser = this._setLaser(colors[i++]);
         }
-    })(),
-    _setLaser: function (rgb){
+    }()),
+    _setLaser: function (rgb) {
         this.removeChild(this.laser);
 
         var g = new createjs.Graphics()
@@ -53,7 +53,7 @@ Sniper.extend(createjs.Container, {
         this.addChild(laser);
         return laser;
     },
-    _setSprite: function(){
+    _setSprite: function () {
         if (this.sprite){
             return this.sprite;
         }

@@ -1,6 +1,6 @@
 'use strict';
 
-var Rocket = function (x, y, angle){
+var Rocket = function (x, y, angle) {
     var spritesheet = new createjs.SpriteSheet({
         images: [images.rocket],
         frames: {width: 26, height: 49},
@@ -15,7 +15,7 @@ var Rocket = function (x, y, angle){
     this.w = 26;
     this.h = 49;
     this.rotation = angle;
-}
+};
 
 Rocket.extend(createjs.Sprite, {
     launch: function (x, y) {
@@ -24,11 +24,11 @@ Rocket.extend(createjs.Sprite, {
         var dy = y - Math.cos(this.rotation*Math.PI/180)*1000;
         var delta = Math.sqrt(Math.pow(dx - this.x, 2) + Math.pow(dy - this.y, 2));
 
-        createjs.Tween.get(this, {loop: false}).to({x: dx, y: dy}, delta).call(function(){
+        createjs.Tween.get(this, {loop: false}).to({x: dx, y: dy}, delta).call(function () {
             this.dispatchEvent('killrocket');
         });
     },
-    isColliding: function(object){
+    isColliding: function (object) {
         var x = this.x;
         var y = this.y;
         var r = this.x + this.w;

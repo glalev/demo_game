@@ -12,6 +12,6 @@ var Explosion = function (x, y){
     createjs.Sprite.call(this, spritesheet, 'boom');
     this.x = x;
     this.y = y;
-}
+};
 
 Explosion.extend(createjs.Sprite);

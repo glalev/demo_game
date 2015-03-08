@@ -1,26 +1,25 @@
 'use strict';
 
-var Game = function(canvas){
+var Game = function (canvas){
     this.stage = new createjs.Stage(canvas);
     this.sniper = null;
-    this.background = null;
     this.enemies = {};
-    this.rockets = {}
+    this.rockets = {};
 };
 
-Game.prototype.menuScreen = function (){
+Game.prototype.menuScreen = function () {
 
     var menu = new Menu();
     menu.init();
     this.stage.addChild(menu);
 
-    menu.on('gameStart', function(e){
+    menu.on('gameStart', function (e) {
         e.remove();
         this._start();
     }, this);
 };
 
-Game.prototype._start = function (){
+Game.prototype._start = function () {
     this._initEnemies();
     this.sniper = new Sniper();
     this.sniper.init();
@@ -46,24 +45,24 @@ Game.prototype.update = function () {
     }
 };
 
-Game.prototype._setExplosion = function(x, y){
+Game.prototype._setExplosion = function (x, y){
     var explosion = new Explosion(x, y);
     this.stage.addChild(explosion);
 
-    explosion.on('animationend', function(e){
+    explosion.on('animationend', function (e){
         e.remove();
         this.parent.removeChild(this);
     });
 };
 
 Game.prototype._launchRocket = function (x, y) {
-    var rocket = new Rocket(this.sniper.x, this.sniper.y, this.sniper.rotation)
+    var rocket = new Rocket(this.sniper.x, this.sniper.y, this.sniper.rotation);
     this.stage.addChild(rocket);
     this.rockets[rocket.id] = rocket;
 
     rocket.launch(x, y);
 
-    rocket.on('killrocket', function(e){
+    rocket.on('killrocket', function (e){
         var rocket = e.target;
         e.remove();
 
@@ -73,39 +72,38 @@ Game.prototype._launchRocket = function (x, y) {
     }, this)
 };
 
-Game.prototype._drawPointer = function (x, y){
+Game.prototype._drawPointer = function (x, y) {
     var pointer = new Pointer(x, y);
     pointer.x = x;
     pointer.y = y;
     this.stage.addChild(pointer);
     pointer.animation();
-
 };
 
 
-Game.prototype._addListeners = function (){
+Game.prototype._addListeners = function () {
 
     this.stage.on('stagemousedown', function (e) {
-        if(e.nativeEvent.button === 0){             //left click
+        if(e.nativeEvent.button === 0) {             //left click
             this._launchRocket(e.stageX, e.stageY);
         }
 
-        if(e.nativeEvent.button === 1){             //midle click
+        if(e.nativeEvent.button === 1) {             //middle click
             this.sniper.changeLaserColor();
         }
 
-        if(e.nativeEvent.button === 2){             //right click
+        if(e.nativeEvent.button === 2) {             //right click
             this.sniper.moveTo(e.stageX, e.stageY);
             this._drawPointer(e.stageX, e.stageY);
         }
     }, this);
 
-    this.stage.on('stagemousemove', function(e){
-        this.sniper.rotate(e.stageX, e.stageY)
+    this.stage.on('stagemousemove', function(e) {
+        this.sniper.rotate(e.stageX, e.stageY);
     }, this);
 };
 
-Game.prototype._initEnemies = function(){
+Game.prototype._initEnemies = function () {
 
     var enemies = [
         {x: 350, y: 25, scaleX: 0.8, scaleY: 0.8},
@@ -120,7 +118,7 @@ Game.prototype._initEnemies = function(){
         this.enemies[enemy.id] = enemy;
         this.stage.addChild(enemy);
 
-        enemy.on('killenemy', function(e){
+        enemy.on('killenemy', function (e) {
             var enemy = e.target;
 
             e.remove();
