@@ -20,6 +20,7 @@ Game.prototype.menuScreen = function (){
 
 Game.prototype.start = function (){
     this.sniper = new Sniper();
+    this.sniper.init();
 
     /************TEST************/
     this.background = new createjs.Bitmap(images.background);
@@ -73,6 +74,10 @@ Game.prototype._addListeners = function (){
     this.stage.on('stagemousedown', function (e) {
         if(e.nativeEvent.button === 0){             //left click
             this.launchRocket(e.stageX, e.stageY);
+        }
+
+        if(e.nativeEvent.button === 1){             //midle click
+            this.sniper.changeLaserColor();
         }
 
         if(e.nativeEvent.button === 2){             //right click
