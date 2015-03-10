@@ -12,12 +12,13 @@ var images = {}
 var App = function (canvas){
     this.game = null;
     this.ticker = null;
+    this.stage = new createjs.Stage(canvas);
 };
 
 App.prototype._preLoad = function (){
     var preload = new createjs.LoadQueue();
     preload.on("fileload", this._handleFileComplete);
-    preload.on("complete", this._startGame, this);
+    preload.on("complete", this._menuScreen, this);
     preload.loadManifest(spreitesheets);
 };
 
@@ -27,18 +28,25 @@ App.prototype._handleFileComplete = function (e){
 
 App.prototype._setTicker = function (){
     createjs.Ticker.timingMode = createjs.Ticker.RAF;
-    this.ticker =  createjs.Ticker.on('tick', function(){
-        this.game.update();
-    },this);
-
-
+    this.ticker =  createjs.Ticker.on('tick', this.stage);
 };
 
 App.prototype._startGame = function (){
-    this.game = new Game(document.getElementById('demoCanvas'));
-    this.game.menuScreen();
-    this._setTicker();
+    this.game = new Game(this.stage);
+    this.stage.addChild(this.game);
 };
 
-var app = new App();
+App.prototype._menuScreen = function (){
+    this._setTicker();
+    var menu = new Menu();
+    this.stage.addChild(menu);
+
+    menu.on('hide', function (e) {
+        var menu = e.target
+        this.stage.removeChild(menu);
+        this._startGame();
+    }, this);
+};
+
+var app = new App(document.getElementById('demoCanvas'));
 app._preLoad();

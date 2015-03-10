@@ -5,58 +5,56 @@ var Sniper = function () {
     createjs.Container.call(this);
     this.x = 50;
     this.y = 50;
+    this.w = 56;
+    this.h = 63;
+    this.speedDelay = 4;
+    this.laserColorNum = 0;
     this.sprite = null;
+    this._init();
+
 };
 
 Sniper.extend(createjs.Container, {
-    init: function () {
+    _init: function () {
         this.sprite = this._setSprite();
-        this.laser = this._setLaser([132, 22, 22]);
+        this.laser = this._setLaser();
 
     },
     moveTo: function (x, y) {
-        var delta = Math.sqrt(Math.pow(x - this.x, 2) + Math.pow(y - this.y, 2));
+        var duration = getDelta(x, y, this.x, this.y) * this.speedDelay; 
 
         createjs.Tween.removeTweens(this);
         this.sprite.gotoAndPlay('run');
 
-        createjs.Tween.get(this, {loop: false}).to({x: x, y: y}, delta*4).call(function () {
+        createjs.Tween.get(this, {loop: false}).to({x: x, y: y}, duration).call(function () {
             this.sprite.gotoAndPlay('stand');
         });
 
     },
     rotate: function (x, y) {
-        var dx = this.x - x;
-        var dy = this.y - y;
-        var angle = Math.atan2(dy, dx) * 180 / Math.PI;
-        this.rotation = angle + 270;
+        var angle = angleBetweenPoints(this.x, this.y, x, y) + 90;
+        this.rotation = angle;
     },
-    changeLaserColor: (function () {
-        var i = 0;
-        var colors = [[22, 132, 22], [22, 22, 132],[132, 22, 22]];
-        return function () {
-            if (i >= colors.length) {
-                i = 0;
-            }
-
-            this.laser = this._setLaser(colors[i++]);
-        }
-    }()),
-    _setLaser: function (rgb) {
+    changeLaserColor: function () {
+        this.laser = this._setLaser();
+    },
+    _setLaser: function () {
         this.removeChild(this.laser);
 
-        var g = new createjs.Graphics()
-            .beginLinearGradientFill(['rgba('+ rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ', 0)', 'rgba('+ rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ', 1)'], [0, 0.4], 1, -450, 1, 450)
-            .drawRect(1, -450, 1, 450);
+        if (this.laserColorNum >= Config.laser.colors.length){
+            this.laserColorNum = 0;
+        }
+        var color = Config.laser.colors[this.laserColorNum++];
+        
+        var graphic = new createjs.Graphics()
+            .beginLinearGradientFill(['transparent', color], [0, 0.4], Config.laser.height, -Config.laser.width, Config.laser.height, Config.laser.width)
+            .drawRect(1, -450, 1, 450); //TODO
 
-        var laser = new createjs.Shape(g);
+        var laser = new createjs.Shape(graphic);
         this.addChild(laser);
         return laser;
     },
     _setSprite: function () {
-        if (this.sprite){
-            return this.sprite;
-        }
         var spritesheet = new createjs.SpriteSheet({
             images: [images.sniper],
             frames: {width: 53, height: 63, regX: 12, regY:0, count: 8},
@@ -66,9 +64,8 @@ Sniper.extend(createjs.Container, {
             }
         });
 
-        var sprite =  new createjs.Sprite( spritesheet, 'stand');
+        var sprite =  new createjs.Sprite(spritesheet, 'stand');
         this.addChild(sprite);
-        this._setSprite = null;
         return sprite;
     }
 });
