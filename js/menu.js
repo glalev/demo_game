@@ -13,39 +13,37 @@ Menu.events = {
 
 Menu.extend(createjs.Container, {
     _init: function () {
-        var menuElements = {
-            container: {x: 0, y:0, h: 500, w: 760, r: 8, color: '#333638', stroke: {color: '#3e4144', ticknes: 12}},        
-            button: {x: 220, y:220, h: 60, w: 320, r: 5, color: '#8bc558', stroke: {color: '', ticknes: 0}, },
-            text: {x: 305, y: 235, message: "Start Game", font: "30px Arial", color: "#ffffff"} //TODO
-        };
+        var menuContainer = this._drawRectangle({x: 0, y:0, h: 500, w: 760, r: 8, color: '#333638', stroke: {color: '#3e4144', ticknes: 12}});
+        var button = this._drawRectangle({x: 220, y:220, h: 60, w: 320, r: 5, color: '#8bc558', stroke: {color: '', ticknes: 0}});
 
-        var menuContainer = this._drawRectangle(menuElements.container);
-        var button = this._drawRectangle(menuElements.button);
-
-        var text = new createjs.Text(menuElements.text.message, menuElements.text.font, menuElements.text.color);
-        text.x = menuElements.button.x + 80;
-        text.y = menuElements.button.y + 15;
+        var text = new createjs.Text("Start Game", "30px Arial", "#ffffff");
+        text.x = 300;
+        text.y = 235;
 
         this.addChild(menuContainer);
         this.addChild(button);
         this.addChild(text);
 
         button.on('click', function (e) {
-            createjs.Tween.get(this, {loop: false}) //TODO hide method
-                .to({y: -760}, 350, createjs.Ease.getBackIn(2))
-                .call(function(){
-                    this.dispatchEvent(Menu.events.HIDE);
-                });
+            this.hide();
         }, this);
     },
 
     _drawRectangle: function(rect){
-        var g = new createjs.Graphics()
+        var graphic = new createjs.Graphics()
                 .setStrokeStyle(rect.stroke.ticknes)
                 .beginFill(rect.color)
                 .beginStroke(rect.stroke.color)
                 .drawRoundRectComplex(rect.x, rect.y, rect.w, rect.h, rect.r, rect.r, rect.r ,rect.r);
 
-        return new createjs.Shape(g);
+        return new createjs.Shape(graphic);
+    },
+    hide: function () {
+        
+        TweenMax.to(this, 0.5, {y: -750, ease: Back.easeInOut,
+            onComplete: this.dispatchEvent,
+            onCompleteParams: [Menu.events.HIDE],
+            onCompleteScope: this
+        });
     }
 });

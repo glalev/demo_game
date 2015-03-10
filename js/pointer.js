@@ -20,10 +20,10 @@ Pointer.extend(createjs.Shape, {
         this.animation();
     },
     animation: function () {
-        createjs.Tween.get(this, {loop: false}).to({scaleX: 4, scaleY: 4}, 200)
-            .to({scaleX: 7, scaleY: 7, alpha: 0.2}, 200)
-            .call(function(){
-                 this.dispatchEvent(Pointer.events.KILL);
-            });
+        TweenMax.to(this, 0.3, {scaleX: 7, scaleY: 7, alpha: 0.2, ease: Linear.easeNone,
+            onComplete: this.dispatchEvent,
+            onCompleteParams: [Pointer.events.KILL],
+            onCompleteScope: this
+        });
     }
 });

@@ -10,6 +10,8 @@ var Sniper = function () {
     this.speedDelay = 4;
     this.laserColorNum = 0;
     this.sprite = null;
+    this.isMoving = false;
+    this.isTeleporting = false;
     this._init();
 
 };
@@ -22,14 +24,20 @@ Sniper.extend(createjs.Container, {
     },
     moveTo: function (x, y) {
         var duration = getDelta(x, y, this.x, this.y) * this.speedDelay; 
+        TweenMax.to(this, duration/1000, {x: x, y: y, ease: Linear.easeNone, onComplete: this.stop, onCompleteScope: this});
 
-        createjs.Tween.removeTweens(this);
-        this.sprite.gotoAndPlay('run');
+        this.run();
+    },
+    moveWith: function (pace, direction){
+        if (this.isTeleporting){
+            return;
+        }
 
-        createjs.Tween.get(this, {loop: false}).to({x: x, y: y}, duration).call(function () {
-            this.sprite.gotoAndPlay('stand');
-        });
+        var corection = this.corectCoordinates(direction);
+        var dx = this.x + corection.x*pace;
+        var dy = this.y + corection.y*pace;
 
+        this.moveTo(dx, dy);
     },
     rotate: function (x, y) {
         var angle = angleBetweenPoints(this.x, this.y, x, y) + 90;
@@ -37,6 +45,37 @@ Sniper.extend(createjs.Container, {
     },
     changeLaserColor: function () {
         this.laser = this._setLaser();
+    },
+    stop: function (){
+        this.sprite.gotoAndPlay('stand');
+        this.isMoving = false;
+        this.isTeleporting = false;
+    },
+    run: function () {
+        if(this.isMoving){
+            return;
+        }
+        
+        this.isMoving = true;
+        this.sprite.gotoAndPlay('run');
+    },
+    corectCoordinates: function(direction){
+        var dx = Math.sin(this.rotation*Math.PI/180)*Config.corrections[direction].sinX + Math.cos(this.rotation*Math.PI/180)*Config.corrections[direction].cosX;
+        var dy = Math.sin(this.rotation*Math.PI/180)*Config.corrections[direction].sinY + Math.cos(this.rotation*Math.PI/180)*Config.corrections[direction].cosY;
+
+        return {x:dx, y:dy}
+    },
+    teleport: function(){
+        this.isTeleporting = true; 
+
+        var corection = this.corectCoordinates('forward');
+        var dx = corection.x*400;
+        var dy = corection.y*400;
+        
+        var timeline = new TimelineMax();
+        timeline.to(this, 0.3, {x: this.x + dx*0.5, y: this.y + dy*0.5, alpha: 0, ease:Cubic.easeIn})
+                .to(this, 0.6, {x: this.x + dx, y: this.y + dy})
+                .to(this, 0.2, {alpha: 1, ease:Cubic.easeOut, onComplete: this.stop, onCompleteScope: this}, '-=0.2');
     },
     _setLaser: function () {
         this.removeChild(this.laser);
@@ -48,7 +87,7 @@ Sniper.extend(createjs.Container, {
         
         var graphic = new createjs.Graphics()
             .beginLinearGradientFill(['transparent', color], [0, 0.4], Config.laser.height, -Config.laser.width, Config.laser.height, Config.laser.width)
-            .drawRect(1, -450, 1, 450); //TODO
+            .drawRect(Config.laser.height, -Config.laser.width, Config.laser.height, Config.laser.width);
 
         var laser = new createjs.Shape(graphic);
         this.addChild(laser);

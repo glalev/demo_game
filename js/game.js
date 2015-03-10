@@ -7,6 +7,7 @@ var Game = function (stage){
     this.rockets = {};
     this.appStage = stage
     this._init();
+    this.pressedKeys = {};
 };
 
 Game.extend(createjs.Container, {
@@ -24,26 +25,40 @@ Game.extend(createjs.Container, {
 	_addListeners: function () {
 		
 		this.appStage.on('stagemousedown', function (e) {
-        if(e.nativeEvent.button === 0) {             //left click
-            this._launchRocket(e.stageX, e.stageY);
-        }
-
-        if(e.nativeEvent.button === 1) {             //middle click
-            this.sniper.changeLaserColor();
-        }
-
-        if(e.nativeEvent.button === 2) {             //right click
-            this.sniper.moveTo(e.stageX, e.stageY);
-            this._drawPointer(e.stageX, e.stageY);
-        }//TODO
-    	}, this);
+	        switch (e.nativeEvent.button) {
+	        	case 0:
+	        		this._launchRocket(e.stageX, e.stageY);
+	        		break;
+	        	case 1:
+	        		this.sniper.changeLaserColor();
+	        		break;
+	        	case 2:
+	        		this.sniper.moveTo(e.stageX, e.stageY);
+	            	this._drawPointer(e.stageX, e.stageY);
+	            	break;
+	        }
+	    }, this);
 
 	    this.appStage.on('stagemousemove', function(e) {
 	        this.sniper.rotate(e.stageX, e.stageY);
 	    }, this);
 
 	    this.on('tick',this.update);
+	   	
+	   	var self = this; 
+	    document.addEventListener('keydown', function (e){
+	    	var key = e.keyCode;
 
+	    	if (key in Config.moves){
+	    		e.preventDefault();
+	    		self.pressedKeys[e.keyCode] = true;
+	    	}
+
+	    });
+
+	    document.addEventListener('keyup', function (e){
+	    	delete self.pressedKeys[e.keyCode];
+	    });
 	},
 
 	update: function () {
@@ -61,6 +76,15 @@ Game.extend(createjs.Container, {
 	           }		
 	       }
 	    }
+
+	    for (var key in this.pressedKeys){
+	    	if (key === '32'){
+	    		this.sniper.teleport();
+	    		break;
+	    	}
+
+	    	this.sniper.moveWith(10, Config.moves[key]);
+	    }
 	},
 	_launchRocket: function (x, y){
 		var rocket = new Rocket(this.sniper.x, this.sniper.y, this.sniper.rotation);
@@ -69,6 +93,9 @@ Game.extend(createjs.Container, {
 
 	    rocket.on('kill', function (e){
 	        var rocket = e.target;
+
+	        TweenMax.killTweensOf(rocket);
+	        delete this.rockets[rocket.id];
 	        this.removeChild(rocket);
 	    }, this);
 	},
