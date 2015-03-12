@@ -7,7 +7,6 @@ var Sniper = function () {
     this.y = 50;
     this.w = 56;
     this.h = 63;
-    this.speedDelay = 4;
     this.laserColorNum = 0;
     this.sprite = null;
     this.isMoving = false;
@@ -23,8 +22,18 @@ Sniper.extend(createjs.Container, {
 
     },
     moveTo: function (x, y) {
-        var duration = getDelta(x, y, this.x, this.y) * this.speedDelay; 
-        TweenMax.to(this, duration/1000, {x: x, y: y, ease: Linear.easeNone, onComplete: this.stop, onCompleteScope: this});
+        var delta = getDelta(x, y, this.x, this.y); 
+        var duration = delta * Config.sniper.speedDelay;
+
+        TweenMax.to(this, duration/1000, {
+            x: x, y: y, 
+            ease: Linear.easeNone,
+            onUpdate: this.parent._updateDistance,
+            onUpdateScope: this.parent,
+            onUpdateParams: [Date.now(), delta, duration],
+            onComplete: this.stop,
+            onCompleteScope: this
+        });
 
         this.run();
     },
@@ -45,11 +54,13 @@ Sniper.extend(createjs.Container, {
     },
     changeLaserColor: function () {
         this.laser = this._setLaser();
+       
     },
     stop: function (){
         this.sprite.gotoAndPlay('stand');
         this.isMoving = false;
         this.isTeleporting = false;
+        data.stats.distance.lastUpdate = 0;
     },
     run: function () {
         if(this.isMoving){
@@ -60,8 +71,11 @@ Sniper.extend(createjs.Container, {
         this.sprite.gotoAndPlay('run');
     },
     corectCoordinates: function(direction){
-        var dx = Math.sin(this.rotation*Math.PI/180)*Config.corrections[direction].sinX + Math.cos(this.rotation*Math.PI/180)*Config.corrections[direction].cosX;
-        var dy = Math.sin(this.rotation*Math.PI/180)*Config.corrections[direction].sinY + Math.cos(this.rotation*Math.PI/180)*Config.corrections[direction].cosY;
+        var dx = Math.sin(this.rotation*Math.PI/180) * Config.corrections[direction].sinX
+                 + Math.cos(this.rotation*Math.PI/180) * Config.corrections[direction].cosX;
+
+        var dy = Math.sin(this.rotation*Math.PI/180) * Config.corrections[direction].sinY
+                + Math.cos(this.rotation*Math.PI/180) * Config.corrections[direction].cosY;
 
         return {x:dx, y:dy}
     },
@@ -69,13 +83,23 @@ Sniper.extend(createjs.Container, {
         this.isTeleporting = true; 
 
         var corection = this.corectCoordinates('forward');
-        var dx = corection.x*400;
-        var dy = corection.y*400;
+        var dx = corection.x * Config.sniper.teleportDistance;
+        var dy = corection.y * Config.sniper.teleportDistance;
         
         var timeline = new TimelineMax();
-        timeline.to(this, 0.3, {x: this.x + dx*0.5, y: this.y + dy*0.5, alpha: 0, ease:Cubic.easeIn})
-                .to(this, 0.6, {x: this.x + dx, y: this.y + dy})
-                .to(this, 0.2, {alpha: 1, ease:Cubic.easeOut, onComplete: this.stop, onCompleteScope: this}, '-=0.2');
+        timeline.to(this, 0.3, {
+                    x: this.x + dx*0.5,
+                    y: this.y + dy*0.5,
+                    alpha: 0,
+                    ease:Cubic.easeIn})
+                .to(this, 0.6, {
+                    x: this.x + dx,
+                    y: this.y + dy})
+                .to(this, 0.2, {
+                    alpha: 1,
+                    ease:Cubic.easeOut,
+                    onComplete: this.stop,
+                    onCompleteScope: this}, '-=0.2');
     },
     _setLaser: function () {
         this.removeChild(this.laser);
@@ -86,11 +110,25 @@ Sniper.extend(createjs.Container, {
         var color = Config.laser.colors[this.laserColorNum++];
         
         var graphic = new createjs.Graphics()
-            .beginLinearGradientFill(['transparent', color], [0, 0.4], Config.laser.height, -Config.laser.width, Config.laser.height, Config.laser.width)
-            .drawRect(Config.laser.height, -Config.laser.width, Config.laser.height, Config.laser.width);
+            .beginLinearGradientFill(
+                ['transparent', color], 
+                [0, 0.4], 
+                Config.laser.height,
+                -Config.laser.width, 
+                Config.laser.height, 
+                Config.laser.width
+            )
+            .drawRect(
+                Config.laser.height,
+                -Config.laser.width,
+                Config.laser.height,
+                Config.laser.width
+            );
 
         var laser = new createjs.Shape(graphic);
         this.addChild(laser);
+
+        $('#containder, #controls_table td').css({'border-color': color});
         return laser;
     },
     _setSprite: function () {

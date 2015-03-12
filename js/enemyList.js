@@ -10,7 +10,7 @@ EnemyList.extend(createjs.Container, {
 		var enemies = data.enemies;
 
 	    for (var i = 0, len = enemies.length; i < len; i++){
-	        var enemy = new Enemy(enemies[i].x, enemies[i].y, enemies[i].scaleX, enemies[i].scaleY, enemies[i].angle);
+	        var enemy = new Enemy(enemies[i].x, enemies[i].y, enemies[i].scaleX, enemies[i].scaleY, enemies[i].type);
 	        this.addChild(enemy);
 
 	        enemy.on('kill', function (e) {

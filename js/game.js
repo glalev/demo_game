@@ -5,6 +5,7 @@ var Game = function (stage){
     this.sniper = null;
     this.enemies = null;
     this.rockets = {};
+    this.stats = {};
     this.appStage = stage
     this._init();
     this.pressedKeys = {};
@@ -16,6 +17,12 @@ Game.extend(createjs.Container, {
     	this.sniper = new Sniper();
     	this.addChild(this.sniper);
     	this._addListeners();
+    	this.stats = {
+    		timer: $('#timer'),
+    		distance: $('#distance'),
+    		shoots: $('#shoots'),
+    		killed:  $('#killed')
+    	}
 	},
 	_initEnemies: function (){
 	
@@ -52,8 +59,9 @@ Game.extend(createjs.Container, {
 	    	if (key in Config.moves){
 	    		e.preventDefault();
 	    		self.pressedKeys[e.keyCode] = true;
+	    		self._updateKeybordInput();
 	    	}
-
+	    	
 	    });
 
 	    document.addEventListener('keyup', function (e){
@@ -70,20 +78,25 @@ Game.extend(createjs.Container, {
 	       for (var k = 0; k < enemies.length; k++){
 	       		if (areColliding(rockets[i], enemies[k])) {
 	                this._setExplosion(enemies[k].x + enemies[k].w/2, enemies[k].y + enemies[k].h/2);
-	                rockets[i].dispatchEvent(Rocket.events.KILL);
-	                enemies[k].dispatchEvent(Enemy.events.KILL);
+	                rockets[i]._kill();
+	                enemies[k]._kill();
+	                this._updateKills();
 	                break;
 	           }		
-	       }
-	    }
+	       }  
+	    } //TODO createjs?
 
-	    for (var key in this.pressedKeys){
+	    this._updateTimer();
+	    
+	},
+	_updateKeybordInput: function(){
+		for (var key in this.pressedKeys){
 	    	if (key === '32'){
 	    		this.sniper.teleport();
 	    		break;
 	    	}
 
-	    	this.sniper.moveWith(10, Config.moves[key]);
+	    	this.sniper.moveWith(Config.sniper.pace, Config.moves[key].direction);
 	    }
 	},
 	_launchRocket: function (x, y){
@@ -98,6 +111,8 @@ Game.extend(createjs.Container, {
 	        delete this.rockets[rocket.id];
 	        this.removeChild(rocket);
 	    }, this);
+
+	    this._updateShoots();
 	},
 	_drawPointer: function (x, y) {
 	    var pointer = new Pointer(x, y);
@@ -115,5 +130,31 @@ Game.extend(createjs.Container, {
 	        var explosion = e.target;
 	        this.removeChild(explosion);
 	    }, this);
+	},
+	_updateTimer: function() {
+		var sec = Math.floor(createjs.Ticker.getTime()/1000);
+		//console.log(createjs.Ticker.getTime()/1000);
+		if (sec > data.stats.time){
+			data.stats.time = sec;
+			this.stats.timer.html(sec);
+		}
+	},
+	_updateShoots: function (){
+		this.stats.shoots.html(++data.stats.shoots)
+	},
+	_updateDistance: function (start, distance, duration) {
+		var now =  Date.now();
+		var then = data.stats.distance.lastUpdate || start;
+		var pxPerMilisec = distance/duration;
+		var deltaTime = now - then;
+
+		data.stats.distance.lastUpdate = now;
+
+		data.stats.distance.value += deltaTime*pxPerMilisec;
+		this.stats.distance.html(Math.round(data.stats.distance.value));
+		
+	},
+	_updateKills: function() {
+		this.stats.killed.html(++data.stats.killed)
 	}
 });

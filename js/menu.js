@@ -14,8 +14,8 @@ Menu.events = {
 Menu.extend(createjs.Container, {
     _init: function () {
         var menuContainer = this._drawRectangle({x: 0, y:0, h: 500, w: 760, r: 8, color: '#333638', stroke: {color: '#3e4144', ticknes: 12}});
-        var button = this._drawRectangle({x: 220, y:220, h: 60, w: 320, r: 5, color: '#8bc558', stroke: {color: '', ticknes: 0}});
-
+        var button = this._drawRectangle({x: 220, y:220, h: 60, w: 320, r: 5, color: 'red', stroke: {color: '', ticknes: 0}});
+        
         var text = new createjs.Text("Start Game", "30px Arial", "#ffffff");
         text.x = 300;
         text.y = 235;
@@ -27,8 +27,8 @@ Menu.extend(createjs.Container, {
         button.on('click', function (e) {
             this.hide();
         }, this);
-    },
 
+    },
     _drawRectangle: function(rect){
         var graphic = new createjs.Graphics()
                 .setStrokeStyle(rect.stroke.ticknes)

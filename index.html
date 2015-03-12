@@ -8,17 +8,55 @@
         <style type="text/css">
             html {
                 background: #1e1f21;
+                
             }
             canvas {
-                margin: 0 auto;
-                display: block;
+                float: left;
                 background: #252729;
+            }
+            #containder {
+                width: 1200px;
+                height: 950px;
+                margin: 0 auto;
+                background: #333638;
+                padding: 2px;
+                border: 1px solid red;
+                color: #dddddd;
+                font-family: Calibri;
+            }
+            #stats {
+                width: 150px;
+                float: left;
+                margin: 30px;
+                display: block;
+            }
+            #stats span {
+                float: right;
+            }
+            table {
+                margin: 15px auto;
+            }
+            td {
+                padding: 5px;
+                padding-right: 15px;
+                border-bottom: 1px solid red;
             }
         </style>
     </head>
     <body>
-        <canvas id="demoCanvas" width="960" height="950" oncontextmenu="return false"></canvas>
-
+        <div id='containder'>
+            <canvas id="demoCanvas" width="960" height="950" oncontextmenu="return false"></canvas>
+            <table id='controls_table'>
+            </table>
+            <div id='stats'>
+                <p>Time: <span id='timer'>0</span></p>
+                <p>Distance: <span id='distance'>0</span></p>
+                <p>Shoots: <span id='shoots'>0</span></p>
+                <p>Killed: <span id='killed'>0</span></p>
+            </div>
+        </div>
+        <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min.js"></script>
         <script src="https://code.createjs.com/preloadjs-0.6.0.min.js"></script>
         <script src="https://code.createjs.com/easeljs-0.8.0.min.js"></script>
         <script src="https://code.createjs.com/tweenjs-0.6.0.min.js"></script>

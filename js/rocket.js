@@ -35,11 +35,16 @@ Rocket.extend(createjs.Sprite, {
         var destination = this._getDestination(x, y); //coordinates of the destination point
         var duration = getDelta(destination.x, destination.y, this.x, this.y)/1000;
 
-        TweenMax.to(this, duration, {x: destination.x, y: destination.y, ease: Linear.easeNone, 
-            onComplete: this.dispatchEvent, 
-            onCompleteParams:[Rocket.events.KILL], 
-            onCompleteScope:this
+        TweenMax.to(this, duration, {
+            x: destination.x, 
+            y: destination.y, 
+            ease: Linear.easeNone, 
+            onComplete: this._kill, 
+            onCompleteScope: this
         });
+    },
+    _kill: function () {
+        this.dispatchEvent(Rocket.events.KILL);
     },
     _getDestination: function (x, y){
         var dx = this.x + Math.sin(this.rotation*Math.PI/180)*1500;

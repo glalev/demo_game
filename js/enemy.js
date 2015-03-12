@@ -1,8 +1,8 @@
 'use strict';
 
-var Enemy = function (x, y, scaleX, scaleY) {
+var Enemy = function (x, y, scaleX, scaleY, type) {
     createjs.Bitmap.call(this);
-    this.image = images.rock;
+    this.image = images[type];
     this.x = x;
     this.y = y;
     this.w = 101 * scaleX;
@@ -15,4 +15,8 @@ Enemy.events = {
     KILL: 'kill'
 };
 
-Enemy.extend(createjs.Bitmap);
+Enemy.extend(createjs.Bitmap, {
+	_kill: function(){
+		this.dispatchEvent(Enemy.events.KILL);
+	}
+});
