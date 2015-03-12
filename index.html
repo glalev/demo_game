@@ -4,10 +4,11 @@
         <title>Demo Game</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-
+        <link href='http://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
         <style type="text/css">
             html {
                 background: #1e1f21;
+
                 
             }
             canvas {
@@ -15,26 +16,37 @@
                 background: #252729;
             }
             #containder {
-                width: 1200px;
+
+                width: 1220px;
                 height: 950px;
                 margin: 0 auto;
                 background: #333638;
                 padding: 2px;
                 border: 1px solid red;
                 color: #dddddd;
-                font-family: Calibri;
+                font-family: "Orbitron";
+                font-size: 0.7em;
             }
             #stats {
-                width: 150px;
+                width: 200px;
                 float: left;
-                margin: 30px;
-                display: block;
+                margin-left: 30px;
+                margin-bottom: 30px;
+                display: none;
             }
             #stats span {
                 float: right;
+                color: red;
+                font-size: 1.2em;
+
+            }
+            #stats p{
+                border-bottom: 1px solid red;
+                padding: 2px;
             }
             table {
-                margin: 15px auto;
+                margin: 0 auto;
+                width: 210px; margin-top: 20px;
             }
             td {
                 padding: 5px;
@@ -46,14 +58,17 @@
     <body>
         <div id='containder'>
             <canvas id="demoCanvas" width="960" height="950" oncontextmenu="return false"></canvas>
-            <table id='controls_table'>
-            </table>
+            
             <div id='stats'>
-                <p>Time: <span id='timer'>0</span></p>
-                <p>Distance: <span id='distance'>0</span></p>
-                <p>Shoots: <span id='shoots'>0</span></p>
-                <p>Killed: <span id='killed'>0</span></p>
+                <h3>Statistics:</h3> 
+                <p>Time: <span id='timer'></span></p>
+                <p>Distance: <span id='distance'></span></p>
+                <p>Shoots: <span id='shoots'></span></p>
+                <p>Killed: <span id='killed'></span></p>
+                <p>Next Enemy after: <span id='enemy_count_down'></span></p>
             </div>
+
+            <table id='controls_table'></table>
         </div>
         <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min.js"></script>
@@ -65,6 +80,7 @@
         <script src="js/config.js"></script>
         <script src="js/data.js"></script>
         <script src="js/menu.js"></script>
+        <script src="js/statistics.js"></script>
         <script src="js/enemyList.js"></script>
         <script src="js/rocket.js"></script>
         <script src="js/enemy.js"></script>

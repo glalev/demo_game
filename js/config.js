@@ -5,7 +5,7 @@ var Config = {
 		speedDelay: 4
 	},
 	laser: {
-		colors: ['#ff0000','#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'],
+		colors: ['#ff0000','#00ff00', '#0055ff', '#ffff00', '#ff00ff', '#00ffff'],
 		width: 450,
 		height: 1
 	},
@@ -21,7 +21,16 @@ var Config = {
 		right: {sinX:0, sinY:1, cosX:1, cosY: 0},
 		forward: {sinX:1, sinY:0, cosX:0, cosY: -1},
 		back: {sinX:-1, sinY:0, cosX:0, cosY: 1}
-	}
+	},
+	enemyTypes: ['dichev', 'hrischo', 'nev', 'plamen', 'sania', 'valeri'],
+	containers: {
+		timer: '#timer', 
+    	distance: '#distance', 
+    	shoots: '#shoots', 
+    	killed: '#killed',
+    	enemyCountDown:'#enemy_count_down',
+    	controlsTable: '#controls_table'
+    }
 };
 
   /*

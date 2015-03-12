@@ -1,10 +1,10 @@
 'use strict';
 
-var Pointer = function (x, y) {
+var Pointer = function (x, y, color) {
     createjs.Shape.call(this);
     this.x = x;
     this.y = y;
-
+    this.color = color;
     this.init();
 };
 Pointer.events = {
@@ -14,7 +14,7 @@ Pointer.events = {
 Pointer.extend(createjs.Shape, {
     init: function() {
         this.graphics = new createjs.Graphics()
-            .beginRadialGradientFill(["transparent","#ff0000"], [0, 1], 0, 0, 2, 0, 0, 3)
+            .beginRadialGradientFill(["transparent", this.color], [0, 1], 0, 0, 2, 0, 0, 3)
             .drawCircle(0, 0, 3);
 
         this.animation();

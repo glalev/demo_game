@@ -16,13 +16,9 @@ Game.extend(createjs.Container, {
 		this._initEnemies();
     	this.sniper = new Sniper();
     	this.addChild(this.sniper);
+    	this.stats = new Statistics(Config.containers);
     	this._addListeners();
-    	this.stats = {
-    		timer: $('#timer'),
-    		distance: $('#distance'),
-    		shoots: $('#shoots'),
-    		killed:  $('#killed')
-    	}
+    	
 	},
 	_initEnemies: function (){
 	
@@ -41,7 +37,7 @@ Game.extend(createjs.Container, {
 	        		break;
 	        	case 2:
 	        		this.sniper.moveTo(e.stageX, e.stageY);
-	            	this._drawPointer(e.stageX, e.stageY);
+	            	this._drawPointer(e.stageX, e.stageY, Config.laser.colors[this.sniper.laserColorNum - 1]);
 	            	break;
 	        }
 	    }, this);
@@ -52,6 +48,11 @@ Game.extend(createjs.Container, {
 
 	    this.on('tick',this.update);
 	   	
+	   	this.stats.on('second', function(){
+			this._updateEnemyCountDown();
+			this._updateDeleteEnemyCountDown();
+		}, this);
+
 	   	var self = this; 
 	    document.addEventListener('keydown', function (e){
 	    	var key = e.keyCode;
@@ -67,26 +68,32 @@ Game.extend(createjs.Container, {
 	    document.addEventListener('keyup', function (e){
 	    	delete self.pressedKeys[e.keyCode];
 	    });
+
+	   
+
 	},
 
-	update: function () {
-		
+	update: function (e) {
+		if (e.paused){
+			return;
+		}
+
     	var rockets = this.rockets;
     	var enemies = this.enemies.children;
 
 	    for (var i in rockets){
 	       for (var k = 0; k < enemies.length; k++){
-	       		if (areColliding(rockets[i], enemies[k])) {
+	       		if (areColliding(rockets[i], enemies[k]) && enemies[k].live) {
 	                this._setExplosion(enemies[k].x + enemies[k].w/2, enemies[k].y + enemies[k].h/2);
 	                rockets[i]._kill();
 	                enemies[k]._kill();
-	                this._updateKills();
+	                this.stats.update('killed');
 	                break;
 	           }		
 	       }  
-	    } //TODO createjs?
+	    }
 
-	    this._updateTimer();
+	    this.stats.timer();
 	    
 	},
 	_updateKeybordInput: function(){
@@ -103,7 +110,6 @@ Game.extend(createjs.Container, {
 		var rocket = new Rocket(this.sniper.x, this.sniper.y, this.sniper.rotation);
     	this.addChild(rocket);
     	this.rockets[rocket.id] = rocket;
-
 	    rocket.on('kill', function (e){
 	        var rocket = e.target;
 
@@ -112,14 +118,16 @@ Game.extend(createjs.Container, {
 	        this.removeChild(rocket);
 	    }, this);
 
-	    this._updateShoots();
+	   	this.stats.update('shoots');
 	},
-	_drawPointer: function (x, y) {
-	    var pointer = new Pointer(x, y);
+	_drawPointer: function (x, y, color) {
+	    var pointer = new Pointer(x, y, color);
+
 	    pointer.on('kill', function(e){
 	    	var pointer = e.target
 	    	 this.stage.removeChild(pointer);
 	    }, this);
+
 	    this.stage.addChild(pointer);
 	},
 	_setExplosion: function (x, y){
@@ -131,30 +139,30 @@ Game.extend(createjs.Container, {
 	        this.removeChild(explosion);
 	    }, this);
 	},
-	_updateTimer: function() {
-		var sec = Math.floor(createjs.Ticker.getTime()/1000);
-		//console.log(createjs.Ticker.getTime()/1000);
-		if (sec > data.stats.time){
-			data.stats.time = sec;
-			this.stats.timer.html(sec);
-		}
-	},
-	_updateShoots: function (){
-		this.stats.shoots.html(++data.stats.shoots)
-	},
-	_updateDistance: function (start, distance, duration) {
-		var now =  Date.now();
-		var then = data.stats.distance.lastUpdate || start;
-		var pxPerMilisec = distance/duration;
-		var deltaTime = now - then;
-
-		data.stats.distance.lastUpdate = now;
-
-		data.stats.distance.value += deltaTime*pxPerMilisec;
-		this.stats.distance.html(Math.round(data.stats.distance.value));
+	_updateEnemyCountDown: function(){
 		
+		var count = data.stats.enemyCountDown;
+		
+		//not enough time has past, the counter is updated
+		if(count > 0){
+			this.stats.update('enemyCountDown', -1);
+			return;
+		}
+
+		//it's time for a new enemy, the counter is reset
+		this.stats.set('enemyCountDown', randomNumberBetween(2, 10));
+		this.enemies.generateEnemy();
+
 	},
-	_updateKills: function() {
-		this.stats.killed.html(++data.stats.killed)
+	_updateDeleteEnemyCountDown: function(){
+		var count = data.stats.deleteEnemyCountDown;
+		
+		if(count > 0){
+			this.stats.update('deleteEnemyCountDown', -1);
+			return;
+		}
+
+		this.stats.set('deleteEnemyCountDown', randomNumberBetween(5, 15));
+		this.enemies.removeEnemy();
 	}
 });

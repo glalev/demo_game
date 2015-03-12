@@ -46,3 +46,7 @@ function angleBetweenPoints(x1, y1, x2, y2){
 
     return Math.atan2(dy, dx) * 180 / Math.PI;
 }
+
+function randomNumberBetween(min, max){
+	return Math.floor(Math.random() * (max + 1 - min) + min);
+}

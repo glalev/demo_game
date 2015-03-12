@@ -28,14 +28,24 @@ Sniper.extend(createjs.Container, {
         TweenMax.to(this, duration/1000, {
             x: x, y: y, 
             ease: Linear.easeNone,
-            onUpdate: this.parent._updateDistance,
-            onUpdateScope: this.parent,
-            onUpdateParams: [Date.now(), delta, duration],
+            onUpdate: this._updateDistance, //TODO
+            onUpdateScope: this,
+            onUpdateParams: [this.x, this.y],
             onComplete: this.stop,
             onCompleteScope: this
         });
 
         this.run();
+    },
+    _updateDistance: function(x, y){
+        x = data.stats.lastCoord.x || x;
+        y = data.stats.lastCoord.y || y;
+
+        var delta = Math.round(getDelta(x, y, this.x, this.y));
+        
+        this.parent.stats.update('distance', delta);
+        data.stats.lastCoord.x = this.x;
+        data.stats.lastCoord.y = this.y;
     },
     moveWith: function (pace, direction){
         if (this.isTeleporting){
@@ -60,7 +70,7 @@ Sniper.extend(createjs.Container, {
         this.sprite.gotoAndPlay('stand');
         this.isMoving = false;
         this.isTeleporting = false;
-        data.stats.distance.lastUpdate = 0;
+        data.stats.lastDistance = {x: 0, y:0};
     },
     run: function () {
         if(this.isMoving){
@@ -128,7 +138,8 @@ Sniper.extend(createjs.Container, {
         var laser = new createjs.Shape(graphic);
         this.addChild(laser);
 
-        $('#containder, #controls_table td').css({'border-color': color});
+        $('#containder, #controls_table td, #stats p').css({'border-color': color});
+        $('#stats span').css({'color': color});
         return laser;
     },
     _setSprite: function () {

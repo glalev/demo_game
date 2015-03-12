@@ -16,9 +16,9 @@ Menu.extend(createjs.Container, {
         var menuContainer = this._drawRectangle({x: 0, y:0, h: 500, w: 760, r: 8, color: '#333638', stroke: {color: '#3e4144', ticknes: 12}});
         var button = this._drawRectangle({x: 220, y:220, h: 60, w: 320, r: 5, color: 'red', stroke: {color: '', ticknes: 0}});
         
-        var text = new createjs.Text("Start Game", "30px Arial", "#ffffff");
-        text.x = 300;
-        text.y = 235;
+        var text = new createjs.Text("Start Game", "30px Orbitron", "#ffffff");
+        text.x = 285;
+        text.y = 230;
 
         this.addChild(menuContainer);
         this.addChild(button);

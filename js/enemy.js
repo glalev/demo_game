@@ -9,6 +9,7 @@ var Enemy = function (x, y, scaleX, scaleY, type) {
     this.h = 84 * scaleY;
     this.scaleX = scaleX;
     this.scaleY = scaleY;
+    this.live = true;
 };
 
 Enemy.events = {
