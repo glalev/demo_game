@@ -16,7 +16,6 @@
                 background: #252729;
             }
             #containder {
-
                 width: 1220px;
                 height: 950px;
                 margin: 0 auto;
@@ -27,20 +26,20 @@
                 font-family: "Orbitron";
                 font-size: 0.7em;
             }
-            #stats {
+            #statistics {
                 width: 200px;
                 float: left;
                 margin-left: 30px;
                 margin-bottom: 30px;
                 display: none;
             }
-            #stats span {
+            #statistics span {
                 float: right;
                 color: red;
                 font-size: 1.2em;
 
             }
-            #stats p{
+            #statistics p{
                 border-bottom: 1px solid red;
                 padding: 2px;
             }
@@ -53,13 +52,16 @@
                 padding-right: 15px;
                 border-bottom: 1px solid red;
             }
+            td.centered {
+                text-align: center;
+            }
         </style>
     </head>
     <body>
         <div id='containder'>
             <canvas id="demoCanvas" width="960" height="950" oncontextmenu="return false"></canvas>
             
-            <div id='stats'>
+            <div id='statistics'>
                 <h3>Statistics:</h3> 
                 <p>Time: <span id='timer'></span></p>
                 <p>Distance: <span id='distance'></span></p>
@@ -74,11 +76,12 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min.js"></script>
         <script src="https://code.createjs.com/preloadjs-0.6.0.min.js"></script>
         <script src="https://code.createjs.com/easeljs-0.8.0.min.js"></script>
-        <script src="https://code.createjs.com/tweenjs-0.6.0.min.js"></script>
         <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.16.0/TweenMax.min.js"></script>
         <script src="js/util.js"></script>
         <script src="js/config.js"></script>
         <script src="js/data.js"></script>
+        <script src="js/controller.js"></script>
+        <script src="js/timer.js"></script>
         <script src="js/menu.js"></script>
         <script src="js/statistics.js"></script>
         <script src="js/enemyList.js"></script>

@@ -38,14 +38,14 @@ Sniper.extend(createjs.Container, {
         this.run();
     },
     _updateDistance: function(x, y){
-        x = data.stats.lastCoord.x || x;
-        y = data.stats.lastCoord.y || y;
+        x = data.statistics.lastCoord.x || x;
+        y = data.statistics.lastCoord.y || y;
 
         var delta = Math.round(getDelta(x, y, this.x, this.y));
         
-        this.parent.stats.update('distance', delta);
-        data.stats.lastCoord.x = this.x;
-        data.stats.lastCoord.y = this.y;
+        this.parent.statistics.increment('distance', delta);
+        data.statistics.lastCoord.x = this.x;
+        data.statistics.lastCoord.y = this.y;
     },
     moveWith: function (pace, direction){
         if (this.isTeleporting){
@@ -70,7 +70,7 @@ Sniper.extend(createjs.Container, {
         this.sprite.gotoAndPlay('stand');
         this.isMoving = false;
         this.isTeleporting = false;
-        data.stats.lastDistance = {x: 0, y:0};
+        data.statistics.lastDistance = {x: 0, y:0};
     },
     run: function () {
         if(this.isMoving){
@@ -138,8 +138,8 @@ Sniper.extend(createjs.Container, {
         var laser = new createjs.Shape(graphic);
         this.addChild(laser);
 
-        $('#containder, #controls_table td, #stats p').css({'border-color': color});
-        $('#stats span').css({'color': color});
+        $('#containder, #controls_table td, #statistics p').css({'border-color': color});
+        $('#statistics span').css({'color': color});
         return laser;
     },
     _setSprite: function () {

@@ -43,7 +43,7 @@ Rocket.extend(createjs.Sprite, {
             onCompleteScope: this
         });
     },
-    _kill: function () {
+    kill: function () {
         this.dispatchEvent(Rocket.events.KILL);
     },
     _getDestination: function (x, y){

@@ -1,15 +1,9 @@
 'use strict';
 
-var Enemy = function (x, y, scaleX, scaleY, type) {
+var Enemy = function (id) {
     createjs.Bitmap.call(this);
-    this.image = images[type];
-    this.x = x;
-    this.y = y;
-    this.w = 101 * scaleX;
-    this.h = 84 * scaleY;
-    this.scaleX = scaleX;
-    this.scaleY = scaleY;
-    this.live = true;
+    this.id = id;
+    this.update();
 };
 
 Enemy.events = {
@@ -17,7 +11,16 @@ Enemy.events = {
 };
 
 Enemy.extend(createjs.Bitmap, {
-	_kill: function(){
+	kill: function(){
 		this.dispatchEvent(Enemy.events.KILL);
-	}
+	},
+    update: function () {
+        var enemyData = _.findWhere(data.enemies, {id: this.id}); //getting the data from the data file
+        enemyData.image = images[enemyData.type];
+        enemyData.w = enemyData.scaleX * 101;
+        enemyData.h = enemyData.scaleY * 84;
+
+        _.extend(this, enemyData);
+  
+    }
 });

@@ -4,8 +4,9 @@ var Game = function (stage){
     createjs.Container.call(this);
     this.sniper = null;
     this.enemies = null;
+    this.timer = new Timer();
     this.rockets = {};
-    this.stats = {};
+    this.statistics = {};
     this.appStage = stage
     this._init();
     this.pressedKeys = {};
@@ -16,7 +17,7 @@ Game.extend(createjs.Container, {
 		this._initEnemies();
     	this.sniper = new Sniper();
     	this.addChild(this.sniper);
-    	this.stats = new Statistics(Config.containers);
+    	this.statistics = new Statistics(Config.containers);
     	this._addListeners();
     	
 	},
@@ -47,10 +48,12 @@ Game.extend(createjs.Container, {
 	    }, this);
 
 	    this.on('tick',this.update);
-	   	
-	   	this.stats.on('second', function(){
+
+		this.timer.on('second', function(){
 			this._updateEnemyCountDown();
 			this._updateDeleteEnemyCountDown();
+			this.statistics.increment('time');
+
 		}, this);
 
 	   	var self = this; 
@@ -69,14 +72,17 @@ Game.extend(createjs.Container, {
 	    	delete self.pressedKeys[e.keyCode];
 	    });
 
+	    window.addEventListener('blur', function(){
+	    	createjs.Ticker.paused = true;
+	    })
+	    window.addEventListener('focus', function(){
+	    	createjs.Ticker.paused = false;
+	    })
 	   
 
 	},
 
 	update: function (e) {
-		if (e.paused){
-			return;
-		}
 
     	var rockets = this.rockets;
     	var enemies = this.enemies.children;
@@ -85,25 +91,26 @@ Game.extend(createjs.Container, {
 	       for (var k = 0; k < enemies.length; k++){
 	       		if (areColliding(rockets[i], enemies[k]) && enemies[k].live) {
 	                this._setExplosion(enemies[k].x + enemies[k].w/2, enemies[k].y + enemies[k].h/2);
-	                rockets[i]._kill();
-	                enemies[k]._kill();
-	                this.stats.update('killed');
+	                rockets[i].kill();
+	                enemies[k].kill();
+	                this.statistics.increment('killed');
 	                break;
 	           }		
 	       }  
 	    }
 
-	    this.stats.timer();
+	    this.timer.update();
 	    
 	},
 	_updateKeybordInput: function(){
-		for (var key in this.pressedKeys){
-	    	if (key === '32'){
+		for (var keyCode in this.pressedKeys){
+	    	if (Config.moves[keyCode].key === 'Space'){	//Spece key was pressed
 	    		this.sniper.teleport();
 	    		break;
 	    	}
 
-	    	this.sniper.moveWith(Config.sniper.pace, Config.moves[key].direction);
+	    	//movement key/s were pressed
+	    	this.sniper.moveWith(Config.sniper.pace, Config.moves[keyCode].direction);
 	    }
 	},
 	_launchRocket: function (x, y){
@@ -118,7 +125,7 @@ Game.extend(createjs.Container, {
 	        this.removeChild(rocket);
 	    }, this);
 
-	   	this.stats.update('shoots');
+	   	this.statistics.increment('shoots');
 	},
 	_drawPointer: function (x, y, color) {
 	    var pointer = new Pointer(x, y, color);
@@ -139,30 +146,30 @@ Game.extend(createjs.Container, {
 	        this.removeChild(explosion);
 	    }, this);
 	},
-	_updateEnemyCountDown: function(){
+	_updateEnemyCountDown: function(){		//TODO I don't like next two methods, must change them
 		
-		var count = data.stats.enemyCountDown;
+		var count = data.statistics.enemyCountDown;
 		
 		//not enough time has past, the counter is updated
 		if(count > 0){
-			this.stats.update('enemyCountDown', -1);
+			this.statistics.decrement('enemyCountDown');
 			return;
 		}
 
 		//it's time for a new enemy, the counter is reset
-		this.stats.set('enemyCountDown', randomNumberBetween(2, 10));
+		this.statistics.set('enemyCountDown', _.random(2, 10));
 		this.enemies.generateEnemy();
 
 	},
 	_updateDeleteEnemyCountDown: function(){
-		var count = data.stats.deleteEnemyCountDown;
+		var count = data.statistics.deleteEnemyCountDown;
 		
 		if(count > 0){
-			this.stats.update('deleteEnemyCountDown', -1);
+			this.statistics.decrement('deleteEnemyCountDown');
 			return;
 		}
 
-		this.stats.set('deleteEnemyCountDown', randomNumberBetween(5, 15));
+		this.statistics.set('deleteEnemyCountDown', _.random(5, 15));
 		this.enemies.removeEnemy();
 	}
 });

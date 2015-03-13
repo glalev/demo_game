@@ -14,45 +14,42 @@ Statistics.events = {
 }
 
 Statistics.extend(createjs.EventDispatcher, {
-    timer: function() {
-		var sec = Math.floor(createjs.Ticker.getTime()/1000);
-			
-		if (sec > data.stats.time){ //a second has past
-			this.update('time');
-			this.dispatchEvent(Statistics.events.SECOND)
-			
-		}
-   },
-   update: function (statistic, value) {
-		value = value || 1;
-    	value = data.stats[statistic] + value;
+    increment: function(statistic, value){
+    	value = value || 1;
+    	value = data.statistics[statistic] + value;
+
+		this.set(statistic, value);
+    },
+    decrement: function (statistic, value){
+    	value = value || 1;
+    	value = data.statistics[statistic] - value;
 
 		this.set(statistic, value);
     },
     set: function (statistic, value) {
        value = value || 0;
 
-		data.stats[statistic] = value;
+		data.statistics[statistic] = value;
 
 		if (this[statistic]){
-			this[statistic].html(data.stats[statistic]);
+			this[statistic].html(data.statistics[statistic]);
 		}
 		
     },
     _init: function (){
-		this.time.html(data.stats.time);
-		this.distance.html(data.stats.distance);
-		this.shoots.html(data.stats.shoots);
-		this.killed.html(data.stats.killed);
-		this.enemyCountDown.html(data.stats.enemyCountDown);
+		this.time.html(data.statistics.time);
+		this.distance.html(data.statistics.distance);
+		this.shoots.html(data.statistics.shoots);
+		this.killed.html(data.statistics.killed);
+		this.enemyCountDown.html(data.statistics.enemyCountDown);
 		this._displayControls(Config.containers.controlsTable);
-		$('#stats').show(); 
+		$('#statistics').show(); 
 	},
 	_displayControls: function (table){
-    var content = '<tr><td>Action</td><td>Key</td></tr>';
+    var content = '<tr><td>Action</td><td class="centered">Key</td></tr>';
 
     content += _.map(Config.moves, function (value){
-        return '<tr><td>' + value.action + '</td><td>' + value.key + '</td></tr>';
+        return '<tr><td>' + value.action + '</td><td class="centered">' + value.key + '</td></tr>';
     }).join('');
 
     $(table).append(content);

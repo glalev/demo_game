@@ -52,7 +52,7 @@ App.prototype._startGame = function (){
 
 App.prototype._menuScreen = function (){
     this._setTicker();
-    //this.stage.enableMouseOver(10);
+    this.stage.enableMouseOver(10);
     var menu = new Menu();
     this.stage.addChild(menu);
     
