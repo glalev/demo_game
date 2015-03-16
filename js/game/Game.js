@@ -91,6 +91,13 @@ Game.extend(createjs.Container, {
 	       for (var k = 0; k < enemies.length; k++){
 	       		if (areColliding(rockets[i], enemies[k]) && enemies[k].live) {
 	                this._setExplosion(enemies[k].x + enemies[k].w/2, enemies[k].y + enemies[k].h/2);
+	                this._setMessage(
+	                	enemies[k].x - 10, 
+	                	enemies[k].y, 
+	                	Config.laser.colors[this.sniper.laserColorNum - 1], 
+	                	'+1 killed'
+	                );
+
 	                rockets[i].kill();
 	                enemies[k].kill();
 	                this.statistics.increment('killed');
@@ -145,6 +152,16 @@ Game.extend(createjs.Container, {
 	        var explosion = e.target;
 	        this.removeChild(explosion);
 	    }, this);
+
+	},
+	_setMessage: function (x, y, color, text) {
+		var message = new Message(x, y, color, text);
+	    this.addChild(message);
+
+	    message.on('kill', function (e) {
+	        var message = e.target;
+	        this.removeChild(message);
+	    }, this);
 	},
 	_updateEnemyCountDown: function() {
 		
@@ -158,7 +175,7 @@ Game.extend(createjs.Container, {
 
 		//it's time for a new enemy, the counter is reset
 		this.statistics.set('enemyCountDown', _.random(2, 10));
-		this.enemies.generateEnemy();
+		this._generateEnemy();
 
 	},
 	_updateDeleteEnemyCountDown: function () {
@@ -170,6 +187,33 @@ Game.extend(createjs.Container, {
 		}
 
 		this.statistics.set('deleteEnemyCountDown', _.random(5, 15));
-		this.enemies.removeEnemy();
+		this._removeEnemy();
+	},
+	_generateEnemy: function (){
+		
+		var enemy = {
+			id: this.enemies.enemyCounter++,
+			x: _.random(0, App.dimensions.WIDTH),
+			y: _.random(0, App.dimensions.HEIGTH),
+			scaleX: _.random(5, 15)/10,
+			type: Config.enemyTypes[_.random(0, Config.enemyTypes.length-1)]
+		}
+
+		enemy.scaleY = enemy.scaleX;
+		enemy.live = true;
+
+		Controller.insert(enemy);
+	},
+	_removeEnemy: function () {
+		var len = this.enemies.children.length
+		if (len < 3){ //there are too few enemies
+			return;
+		}
+
+		var randomEnemyIndex = _.random(0, len-1)
+		var enemy = this.enemies.children[randomEnemyIndex];
+
+		enemy.kill();
+
 	}
 });
