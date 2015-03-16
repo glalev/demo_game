@@ -26,6 +26,12 @@ function getDelta (x1, y1, x2, y2) {
 }
 
 function areColliding(object1, object2){
+	object1.w = object1.w || this.getTransformedBounds().width;
+	object1.h = object1.h || this.getTransformedBounds().height;
+
+	object2.w = object1.w || this.getTransformedBounds().width;
+	object2.h = object1.h || this.getTransformedBounds().height;
+
 	var x = object1.x;
     var y = object1.y;
     var r = object1.x + object1.w;

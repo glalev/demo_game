@@ -7,12 +7,16 @@ var Sniper = function () {
     this.y = 50;
     this.w = 56;
     this.h = 63;
-    this.laserColorNum = 0;
+    this.laserColorNum = -1;
     this.sprite = null;
     this.isMoving = false;
     this.isTeleporting = false;
     this._init();
 
+};
+
+Sniper.events = {
+  CHANGE_LASER_COLOR: 'change_laser_color'
 };
 
 Sniper.extend(createjs.Container, {
@@ -28,7 +32,7 @@ Sniper.extend(createjs.Container, {
         TweenMax.to(this, duration/1000, {
             x: x, y: y, 
             ease: Linear.easeNone,
-            onUpdate: this._updateDistance, //TODO
+            onUpdate: this._updateDistance, 
             onUpdateScope: this,
             onUpdateParams: [this.x, this.y],
             onComplete: this.stop,
@@ -113,12 +117,13 @@ Sniper.extend(createjs.Container, {
     },
     _setLaser: function () {
         this.removeChild(this.laser);
-
-        if (this.laserColorNum >= Config.laser.colors.length){
+        
+        if (++this.laserColorNum === Config.laser.colors.length){
             this.laserColorNum = 0;
         }
-        var color = Config.laser.colors[this.laserColorNum++];
         
+        var color = Config.laser.colors[this.laserColorNum];
+
         var graphic = new createjs.Graphics()
             .beginLinearGradientFill(
                 ['transparent', color], 
@@ -138,8 +143,8 @@ Sniper.extend(createjs.Container, {
         var laser = new createjs.Shape(graphic);
         this.addChild(laser);
 
-        $('#containder, #controls_table td, #statistics p').css({'border-color': color});
-        $('#statistics span').css({'color': color});
+        this.dispatchEvent(Sniper.events.CHANGE_LASER_COLOR);
+       
         return laser;
     },
     _setSprite: function () {

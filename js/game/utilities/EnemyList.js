@@ -44,21 +44,6 @@ EnemyList.extend(createjs.Container, {
 	},
 	_initEnemy: function (id){
 		var enemy = new Enemy(id);
-
-		 enemy.on('kill', function (e) {
-	        var enemy = e.target;
- 
-			Controller.update({
-				type: 'skull', 
-				scaleX: enemy.scaleX*0.06, 
-				scaleY: enemy.scaleY*0.06, 
-				live: false
-			}, enemy.id);	
-
-			enemy.fadeOut();
-
-	    }, this);
-
 		this.addChild(enemy);
 	},
 	_addListeners: function (){

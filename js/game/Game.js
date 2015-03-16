@@ -10,6 +10,7 @@ var Game = function (stage){
     this.appStage = stage
     this._init();
     this.pressedKeys = {};
+    this.color = Config.laser.colors[this.sniper.laserColorNum];
 };
 
 Game.extend(createjs.Container, {
@@ -38,7 +39,7 @@ Game.extend(createjs.Container, {
 	        		break;
 	        	case 2:
 	        		this.sniper.moveTo(e.stageX, e.stageY);
-	            	this._drawPointer(e.stageX, e.stageY, Config.laser.colors[this.sniper.laserColorNum - 1]);
+	            	this._drawPointer(e.stageX, e.stageY, this.color);
 	            	break;
 	        }
 	    }, this);
@@ -53,6 +54,11 @@ Game.extend(createjs.Container, {
 			this._updateEnemyCountDown();
 			this._updateDeleteEnemyCountDown();
 			this.statistics.increment('time');
+
+		}, this);
+
+		this.sniper.on('change_laser_color', function () {
+			this._changeColor();
 
 		}, this);
 
@@ -90,16 +96,23 @@ Game.extend(createjs.Container, {
 	    for (var i in rockets){
 	       for (var k = 0; k < enemies.length; k++){
 	       		if (areColliding(rockets[i], enemies[k]) && enemies[k].live) {
-	                this._setExplosion(enemies[k].x + enemies[k].w/2, enemies[k].y + enemies[k].h/2);
+	       			var bounds = enemies[k].getTransformedBounds()
+	                this._setExplosion(enemies[k].x + bounds.width/2, enemies[k].y + bounds.height/2);
 	                this._setMessage(
 	                	enemies[k].x - 10, 
 	                	enemies[k].y, 
-	                	Config.laser.colors[this.sniper.laserColorNum - 1], 
+	                	this.color, 
 	                	'+1 killed'
 	                );
 
 	                rockets[i].kill();
-	                enemies[k].kill();
+
+	                Controller.update({
+						scaleX:  enemies[k].scaleX*0.06, 
+						scaleY:  enemies[k].scaleY*0.06, 
+						live: false
+					},  enemies[k].id);	
+
 	                this.statistics.increment('killed');
 	                break;
 	           }		
@@ -193,8 +206,8 @@ Game.extend(createjs.Container, {
 		
 		var enemy = {
 			id: this.enemies.enemyCounter++,
-			x: _.random(0, App.dimensions.WIDTH),
-			y: _.random(0, App.dimensions.HEIGTH),
+			sx: _.random(0, App.dimensions.WIDTH),
+			sy: _.random(0, App.dimensions.HEIGTH),
 			scaleX: _.random(5, 15)/10,
 			type: Config.enemyTypes[_.random(0, Config.enemyTypes.length-1)]
 		}
@@ -213,7 +226,21 @@ Game.extend(createjs.Container, {
 		var randomEnemyIndex = _.random(0, len-1)
 		var enemy = this.enemies.children[randomEnemyIndex];
 
-		enemy.kill();
+		 Controller.update({
+			scaleX:  enemy.scaleX*0.06, 
+			scaleY:  enemy.scaleY*0.06, 
+			live: false
+		},  enemy.id);	
+	}, 
+	_changeColor: function () {
+		this.color =  Config.laser.colors[this.sniper.laserColorNum];
 
+		var borders = $('#containder, #controls_table td, #statistics p');
+		var text = $('#statistics span');
+		var tl = new TimelineLite();
+
+		tl.to(borders, 0.5, {borderColor: 'transperant'})
+			.to(borders, 1, {borderColor: this.color})
+			.to(text, 1.5, {color: this.color}, 0);
 	}
 });
