@@ -15,7 +15,7 @@ Menu.extend(createjs.Container, {
     _init: function () {
         var menuContainer = this._drawRectangle({x: 0, y:0, h: 500, w: 760, r: 8, color: '#333638', stroke: {color: '#3e4144', ticknes: 12}});
         var button = this._drawRectangle({x: 220, y:220, h: 60, w: 320, r: 3, color: '#3e4144', stroke: {color: 'red', ticknes: 2}});
-        var hoverButon = this._drawRectangle({x: 220, y:220, h: 60, w: 320, r: 3, color: '#ffffff', stroke: {color: 'red', ticknes: 2}});
+        var hoverButon = this._drawRectangle({x: 220, y:220, h: 60, w: 320, r: 3, color: '#ffffff', stroke: {color: '', ticknes: 0}});
         hoverButon.alpha = 0;
 
         var text = new createjs.Text("Start Game", "30px Orbitron", "#dddddd");
@@ -27,12 +27,18 @@ Menu.extend(createjs.Container, {
         this.addChild(button);
         this.addChild(hoverButon);
         this.addChild(text);
-       
-        button.on('mouseover', function (e) {
-              TweenMax.to(hoverButon,0.2, {
-                alpha: alpha, 
-                ease: Linear.easeNone,
-               
+
+        button.on('mouseout', function () {
+              TweenMax.to(hoverButon, 0.2, {
+                alpha: 0, 
+                ease: Linear.easeNone,             
+            });
+        }, this);
+
+        button.on('mouseover', function () {
+              TweenMax.to(hoverButon, 0.2, {
+                alpha: 0.1, 
+                ease: Linear.easeNone,       
             });
         }, this);
 

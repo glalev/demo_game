@@ -141,12 +141,12 @@ Game.extend(createjs.Container, {
 	    var explosion = new Explosion(x, y);
 	    this.addChild(explosion);
 
-	    explosion.on('animationend', function (e){
+	    explosion.on('animationend', function (e) {
 	        var explosion = e.target;
 	        this.removeChild(explosion);
 	    }, this);
 	},
-	_updateEnemyCountDown: function(){		//TODO I don't like next two methods, must change them
+	_updateEnemyCountDown: function() {
 		
 		var count = data.statistics.enemyCountDown;
 		
@@ -161,7 +161,7 @@ Game.extend(createjs.Container, {
 		this.enemies.generateEnemy();
 
 	},
-	_updateDeleteEnemyCountDown: function(){
+	_updateDeleteEnemyCountDown: function () {
 		var count = data.statistics.deleteEnemyCountDown;
 		
 		if(count > 0){

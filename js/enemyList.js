@@ -94,7 +94,7 @@ EnemyList.extend(createjs.Container, {
 		this.addChild(enemy);
 	},
 	_addListeners: function (){
-		Controller.on('data_changed', function (e){
+		Controller.on('data_changed', function (){
 			this._updateList();
 		}, this);
 	}

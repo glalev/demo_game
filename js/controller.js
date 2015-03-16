@@ -5,7 +5,7 @@ var Controller = extend(createjs.EventDispatcher, {
 		if(_.isArray(container)){
 			container.push(item);
 			var e = new createjs.Event(Controller.events.CHANGE);
-			e.itemId =item.id;
+			e.itemId = item.id;
 			Controller.dispatchEvent(e);
 		}
 
