@@ -14,7 +14,7 @@ var spreitesheets = [
     {name: 'skull', src: 'assets/monsters/skull.png'}
 ];
 
-var images = {}
+var images = {};
 
 var App = function (canvas){
     this.game = null;
@@ -25,7 +25,8 @@ var App = function (canvas){
 App.dimensions = {
     WIDTH: 960,
     HEIGTH: 950
-}
+};
+
 App.prototype._preLoad = function (){
     var preload = new createjs.LoadQueue();
     preload.on("fileload", this._handleFileComplete);
@@ -57,7 +58,7 @@ App.prototype._menuScreen = function (){
     this.stage.addChild(menu);
     
     menu.on('hide', function (e) {
-        var menu = e.target
+        var menu = e.target;
         this.stage.removeChild(menu);
         this._startGame();
     }, this);

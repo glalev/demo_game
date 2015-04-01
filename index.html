@@ -5,55 +5,8 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link href='http://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
-        <style type="text/css">
-            html {
-                background: #1e1f21;
-            }
-            canvas {
-                float: left;
-                background: #252729;
-            }
-            #containder {
-                width: 1220px;
-                height: 950px;
-                margin: 0 auto;
-                background: #333638;
-                padding: 2px;
-                border: 1px solid red;
-                color: #dddddd;
-                font-family: "Orbitron";
-                font-size: 0.7em;
-            }
-            #statistics {
-                width: 200px;
-                float: left;
-                margin-left: 30px;
-                margin-bottom: 30px;
-                display: none;
-            }
-            #statistics span {
-                float: right;
-                color: red;
-                font-size: 1.2em;
-
-            }
-            #statistics p{
-                border-bottom: 1px solid red;
-                padding: 2px;
-            }
-            table {
-                margin: 0 auto;
-                width: 210px; margin-top: 20px;
-            }
-            td {
-                padding: 5px;
-                padding-right: 15px;
-                border-bottom: 1px solid red;
-            }
-            td.centered {
-                text-align: center;
-            }
-        </style>
+        <link href='build/style.css' rel='stylesheet' type='text/css'>
+       
     </head>
     <body>
         <div id='containder'>
@@ -70,27 +23,6 @@
 
             <table id='controls_table'></table>
         </div>
-        
-        <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min.js"></script>
-        <script src="https://code.createjs.com/preloadjs-0.6.0.min.js"></script>
-        <script src="https://code.createjs.com/easeljs-0.8.0.min.js"></script>
-        <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.16.0/TweenMax.min.js"></script>
-        <script src="js/util.js"></script>
-        <script src="js/game/data/Config.js"></script>
-        <script src="js/game/data/data.js"></script>
-        <script src="js/game/static/Controller.js"></script>
-        <script src="js/game/utilities/Timer.js"></script>
-        <script src="js/game/utilities/Menu.js"></script>
-        <script src="js/game/utilities/Statistics.js"></script>
-        <script src="js/game/utilities/EnemyList.js"></script>
-        <script src="js/game/entities/Rocket.js"></script>
-        <script src="js/game/entities/Enemy.js"></script>
-        <script src="js/game/entities/Explosion.js"></script>
-        <script src="js/game/entities/Pointer.js"></script>
-        <script src="js/game/entities/Message.js"></script>
-        <script src="js/game/entities/Sniper.js"></script>
-        <script src="js/game/Game.js"></script>
-        <script src="js/App.js"></script>
+        <script src="build/app.js"></script>
     </body>
 </html>

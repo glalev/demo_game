@@ -1,0 +1,45 @@
+#containder {
+    width: 1220px;
+    height: 950px;
+    margin: 0 auto;
+    background: #333638;
+    padding: 2px;
+    border: 1px solid red;
+    color: #dddddd;
+    font-family: "Orbitron";
+     font-size: 0.7em;
+}
+
+#statistics {
+    width: 200px;
+    float: left;
+    margin-left: 30px;
+    margin-bottom: 30px;
+    display: none;
+}
+
+#statistics span {
+    float: right;
+    color: red;
+    font-size: 1.2em;
+}
+            
+#statistics p{
+    border-bottom: 1px solid red;
+    padding: 2px;
+}
+
+table {
+    margin: 0 auto;
+    width: 210px; margin-top: 20px;
+}
+
+td {
+    padding: 5px;
+    padding-right: 15px;
+    border-bottom: 1px solid red;
+}
+
+td.centered {
+    text-align: center;
+}
